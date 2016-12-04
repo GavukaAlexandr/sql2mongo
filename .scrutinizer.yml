@@ -7,6 +7,5 @@ build:
             before:
                 - pecl install mongodb
                 - echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
-                - composer self-update
                 - composer install
                 - mongoimport --db test --collection restaurants --drop --file dump/dataset.json
