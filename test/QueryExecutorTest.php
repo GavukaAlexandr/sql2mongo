@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: c4r0n0s
- * Date: 04.12.16
- * Time: 15:21
- */
 
 namespace mongoSQLClient;
 
