@@ -4,6 +4,7 @@ namespace mongoSQLClient;
 
 use League\CLImate\CLImate;
 use MongoDB\Client;
+use \MongoDB\Driver\Cursor;
 
 class CLIQueryProcessed implements ConsoleCommand
 {
@@ -64,7 +65,7 @@ class CLIQueryProcessed implements ConsoleCommand
 
     /**
      * Processed SQL query;
-     * @return array
+     * @return Cursor|array
      */
     private function processedSQLQuery()
     {
@@ -77,7 +78,7 @@ class CLIQueryProcessed implements ConsoleCommand
     /**
      * Execute SQL query through MongoDBClient
      * @param $response
-     * @return array
+     * @return Cursor|array
      */
     private function executeSQLQuery($response)
     {
