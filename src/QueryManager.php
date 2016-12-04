@@ -109,7 +109,7 @@ class QueryManager
 
     /**
      * Convert SQL WHERE to mongo filter
-     * @param SelectStatement $whereStatement
+     * @param array $whereStatement
      * @return mixed|SelectStatement|string
      */
     private function parseWhereStatement($whereStatement)
@@ -220,6 +220,7 @@ class QueryManager
      */
     private function parseEqualCondition(&$statements)
     {
+        $tmp = array();
         $value = (is_numeric(trim($statements[1]))) ? (float)$statements[1] : $statements[1];
         $tmp[$statements[0]] = $value;
         $statements = $tmp;
