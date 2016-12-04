@@ -30,18 +30,16 @@ For import test collections to Mongodb you can go to the root project folder and
 $ mongoimport --db test --collection restaurants --drop --file dump/dataset.json
 ```
 
-##Using
+## Using
 You can run app by following steps:
 + Go to project **root** folder
 + Run php script **php src/sql2mongo.php**
 + Enter command **help**
 + You will see list of available commands
-+ How you can use these commands you can see on the screenshots
-+ How execute SQL query  you can see on the screenshots
-
-<p align="center">Screenshots</p>
 ![sql2mongo user interface](https://dl.dropboxusercontent.com/1/view/jw59ou94h2xufwe/Apps/Shutter/Selection_001.png)
++ How you can use these commands you can see on the screenshots
 ![sql2mongo executing commands](https://dl.dropboxusercontent.com/1/view/skj8gpilr8y1ohw/Apps/Shutter/Selection_002.png)
++ How execute SQL query  you can see on the screenshots
 ![sql2mongo executing SQL query](https://dl.dropboxusercontent.com/1/view/uurglg2hrjdld9g/Apps/Shutter/Selection_003.png)
 ![sql2mongo executing SQL query](https://dl.dropboxusercontent.com/1/view/d3cxpeewquzqpvj/Apps/Shutter/Selection_004.png)
 
@@ -53,4 +51,4 @@ You can run app by following steps:
 + [phpunit/phpunit](https://github.com/sebastianbergmann/phpunit)
 
 
-`PS. Sorry for my English`
+**PS.** _Sorry for my English_

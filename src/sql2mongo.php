@@ -18,8 +18,9 @@ if (PHP_SAPI !== 'cli') {
     return;
 }
 
+$configs = parse_ini_file('configs.ini');
 $climate = new CLImate;
-$client = new Client();
+$client = new Client($configs['mongo_uri']);
 
 $climate->info('SQL2MongoDB shell version: 0.1.0');
 $cliText = '<cyan>Please enter <bold>help</bold> to show list of Commands or <bold>exit</bold> to exit from app >></cyan>';
