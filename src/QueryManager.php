@@ -65,27 +65,7 @@ class QueryManager
             throw new SQLParseException("SQL query isn't valid \n");
         }
 
-        /**
-         * @var SelectStatement
-         */
-        $statements = $parser->statements[0];
-        $mongoQuery = array();
-
-        if ($statements instanceof SelectStatement) {
-
-            if ($statements !== null && (!$statements->validateClauseOrder($parser, $parser->list) || empty($statements->from))) {
-                throw new SQLParseException('SQL query isn\'t valid');
-            }
-
-            $db = $statements->from[0]->table;
-            $fields = $this->parseSelectStatement($statements);
-            $mongoWhere = !empty($statements->where) ? $this->parseWhereStatement($statements->where) : array();
-            $orders = $this->parseOrderStatement($statements);
-
-            $mongoQuery = $this->createMongoQuery($statements, $db, $mongoWhere, $fields, $orders);
-        }
-
-        return $mongoQuery;
+        return $this->parseAndCreateMongoQuery($parser);
     }
 
 
@@ -288,5 +268,38 @@ class QueryManager
         if (!empty($limit->{$field}) && is_int($limit->{$field})) {
             $options[$key] = (int)$limit->{$field};
         }
+    }
+
+    /**
+     * Parse and create mongo array criteria
+     * @param Parser $parser
+     * @return array
+     * @throws SQLParseException
+     */
+    private function parseAndCreateMongoQuery($parser)
+    {
+        $mongoQuery = array();
+
+        /**
+         * @var SelectStatement
+         */
+        $statements = $parser->statements[0];
+
+        if ($statements instanceof SelectStatement) {
+
+            if ($statements !== null && (!$statements->validateClauseOrder($parser, $parser->list) || empty($statements->from))) {
+                throw new SQLParseException('SQL query isn\'t valid');
+            }
+
+            $db = $statements->from[0]->table;
+            $fields = $this->parseSelectStatement($statements);
+            $mongoWhere = !empty($statements->where) ? $this->parseWhereStatement($statements->where) : array();
+            $orders = $this->parseOrderStatement($statements);
+
+            $mongoQuery = $this->createMongoQuery($statements, $db, $mongoWhere, $fields, $orders);
+            return $mongoQuery;
+        }
+
+        return $mongoQuery;
     }
 }
