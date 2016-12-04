@@ -1,6 +1,4 @@
-#!/usr/bin/env php
 <?php
-
 namespace mongoSQLClient;
 
 set_time_limit(300);
@@ -19,6 +17,7 @@ use MongoDB\Client;
 if (PHP_SAPI !== 'cli') {
     return;
 }
+
 $climate = new CLImate;
 $client = new Client();
 
