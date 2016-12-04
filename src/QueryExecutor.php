@@ -28,6 +28,7 @@ class QueryExecutor
     }
 
     /**
+     * Get maximum rows of result
      * @return int
      */
     public function getRowsLimit()
@@ -36,6 +37,7 @@ class QueryExecutor
     }
 
     /**
+     * Set maximum rows of result
      * @param int $rowsLimit
      */
     public function setRowsLimit($rowsLimit)
@@ -55,15 +57,22 @@ class QueryExecutor
             throw new SQLParseException('Query without DB');
         }
 
-        if (empty($query['options']) && !isset($query['options']['limit'])) {
-            $query['options']['limit'] = $this->rowsLimit;
-        }
+        $this->setDefaultQueryLimit($query);
 
-        //TODO move Current DB to helper state Class
         $collection = $this->client->selectCollection($this->currentDB, $query['db']);
         $cursor = $collection->find($query['filter'], $query['options']);
         $cursor->setTypeMap(['root' => 'array', 'document' => 'array', 'array' => 'array']);
 
         return $cursor;
+    }
+
+    /**
+     * Set default query limit if it needed
+     * @param $query
+     */
+    private function setDefaultQueryLimit(&$query) {
+        if (empty($query['options']) && !isset($query['options']['limit'])) {
+            $query['options']['limit'] = $this->rowsLimit;
+        }
     }
 }

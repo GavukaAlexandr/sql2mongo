@@ -4,7 +4,7 @@ namespace mongoSQLClient;
 
 use League\CLImate\CLImate;
 use MongoDB\Client;
-use MongoDB\Database;
+use League\CLImate\TerminalObject\Dynamic\Padding;
 
 class CLIMongoClient implements ConsoleCommand
 {
@@ -64,42 +64,67 @@ class CLIMongoClient implements ConsoleCommand
                 $this->printListOfCommands();
                 break;
             case 'show dbs':
-                $dbs = $this->mongoClient->listDatabases();
-                foreach ($dbs as $db) {
-                    $padding = $this->cli->padding(20)->char('.');
-                    $padding->label($db->getName())->result($this->formatBytes($db->getSizeOnDisk()));
-                }
+                $this->showDatabases();
                 break;
             case 'show collection':
-                $currentDB = $this->currentDB;
-                if (!empty($currentDB) && $currentDB instanceof Database) {
-                    $collections = $this->mongoClient->selectDatabase($currentDB->getDatabaseName())->listCollections();
-                    foreach ($collections as $collection) {
-                        $this->cli->shout('   ' . $collection->getName());
-                    }
-                } else {
-                    $this->cli->error('Please select db');
-                }
+                $this->showCollections();
                 break;
             case 'use':
-                $input = $this->cli->input('Please enter DB name >>');
-                $dbName = $input->prompt();
-                $this->currentDB = $this->mongoClient->selectDatabase($dbName);
-                $this->cli->info('Selected ' . $dbName . ' database');
+                $this->selectCurrentDatabase();
                 break;
         }
     }
-
 
     /**
      * Print list of available Commands
      */
     private function printListOfCommands()
     {
+        /**
+         * @var Padding
+         */
         $padding = $this->cli->padding(50)->char(' ');
         $padding->label('    <bold><blue>show dbs:</blue></bold>')->result('show database names');
         $padding->label('    <bold><blue>show collection:</blue></bold>')->result('show collections in current database');
         $padding->label('    <bold><blue>use:</blue></bold>')->result('set current database');
     }
 
+    /**
+     * Print list of databases
+     */
+    private function showDatabases()
+    {
+        $dbs = $this->mongoClient->listDatabases();
+        foreach ($dbs as $db) {
+            $padding = $this->cli->padding(20)->char('.');
+            $padding->label($db->getName())->result($this->formatBytes($db->getSizeOnDisk()));
+        }
+    }
+
+    /**
+     * Print list of collections in current mongo DB
+     */
+    private function showCollections()
+    {
+        $currentDB = $this->currentDB;
+        if (!empty($currentDB)) {
+            $collections = $this->mongoClient->selectDatabase($currentDB)->listCollections();
+            foreach ($collections as $collection) {
+                $this->cli->shout('   ' . $collection->getName());
+            }
+        } else {
+            $this->cli->error('Please select db');
+        }
+    }
+
+    /**
+     * Select current mongo DB
+     */
+    private function selectCurrentDatabase()
+    {
+        $input = $this->cli->input('Please enter DB name >>');
+        $dbName = $input->prompt();
+        $this->currentDB = $this->mongoClient->selectDatabase($dbName)->getDatabaseName();
+        $this->cli->info('Selected ' . $dbName . ' database');
+    }
 }
