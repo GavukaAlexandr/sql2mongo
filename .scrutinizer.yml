@@ -13,4 +13,4 @@ build:
                 - sudo apt-get update
                 - sudo apt-get install -y mongodb-org
                 - sudo service mongodb start
-                - mongoimport --db tests --collection restaurants --drop --file dump/dataset.json
+                - mongoimport --db test --collection restaurants --drop --file dump/dataset.json
