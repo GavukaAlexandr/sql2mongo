@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+
 namespace mongoSQLClient;
 
 set_time_limit(300);

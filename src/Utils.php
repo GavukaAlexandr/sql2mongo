@@ -52,7 +52,6 @@ trait Utils
 
         if (!empty($data)) {
             $cli->table($data);
-//            var_dump($data);
         } else {
             $cli->blue()->out('Search returned no results');
         }

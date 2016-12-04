@@ -109,12 +109,9 @@ class QueryManager
             );
 
             if (isset($statements->limit) && !empty($statements->limit)) {
-                if (!empty($statements->limit->rowCount) && is_int($statements->limit->rowCount)) {
-                    $mongoQuery['options']['limit'] = (int)$statements->limit->rowCount;
-                }
-                if (!empty($statements->limit->offset) && is_int($statements->limit->offset)) {
-                    $mongoQuery['options']['skip'] = (int)$statements->limit->offset;
-                }
+                $options = &$mongoQuery['options'];
+                $this->setOptionProperty($statements->limit, $options, 'rowCount', 'limit');
+                $this->setOptionProperty($statements->limit, $options, 'offset', 'skip');
             }
 
             //Remove empty elements
@@ -164,6 +161,7 @@ class QueryManager
     {
         $statements = explode($operation, $statements);
         if (sizeof($statements) > 1) {
+            $tmp = array();
             if (in_array($operation, [' $or ', ' $and '])) {
                 $operation = trim($operation);
                 $tmp[$operation] = array();
@@ -188,6 +186,12 @@ class QueryManager
         }
 
         return $statements;
+    }
+
+    private function setOptionProperty($limit, &$options, $field, $key) {
+        if (!empty($limit->{$field}) && is_int($limit->{$field})) {
+            $options[$key] = (int)$limit->{$field};
+        }
     }
 
 }
