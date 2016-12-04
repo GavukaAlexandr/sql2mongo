@@ -8,5 +8,7 @@ build:
                 - pecl install mongodb
                 - echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
                 - composer install
+                - sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
+                - echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
                 - sudo apt-get install -y mongodb-org
                 - mongoimport --db test --collection restaurants --drop --file dump/dataset.json
