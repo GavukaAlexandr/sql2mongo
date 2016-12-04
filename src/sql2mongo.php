@@ -26,19 +26,17 @@ $cliText = '<cyan>Please enter <bold>help</bold> to show list of Commands or <bo
 $cli = $climate->input($cliText);
 $currentDB = 'test';
 
-$cli->accept(function ($response) use ($climate, &$client, &$currentDB) {
+$commandHandlers = array(
+    new CLIMongoClient($climate, $client, $currentDB),
+    new CLIQueryProcessed($climate, $client, $currentDB)
+);
+
+$cli->accept(function ($response) use ($commandHandlers) {
     if ($response === 'exit') {
         return true;
     }
 
-    $commandHandlers = array(
-        new CLIMongoClient($climate, $client, $currentDB),
-        new CLIQueryProcessed($climate, $client, $currentDB)
-    );
-
     foreach ($commandHandlers as $commandHandler) {
-
-
         if ($commandHandler instanceof ConsoleCommand && in_array($response, $commandHandler->getAvailableCommands())) {
             $commandHandler->handle($response);
         }

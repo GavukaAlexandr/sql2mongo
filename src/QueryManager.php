@@ -3,6 +3,7 @@
 namespace mongoSQLClient;
 
 use SqlParser\Parser;
+use SqlParser\Statements\SelectStatement;
 use mongoSQLClient\Exception\SQLParseException;
 
 /**
@@ -64,55 +65,61 @@ class QueryManager
             throw new SQLParseException("SQL query isn't valid \n");
         }
 
+        /**
+         * @var SelectStatement
+         */
         $statements = $parser->statements[0];
-        // TODO add validation
+        $mongoQuery = array();
 
-        if ($statements !== null && (!$statements->validateClauseOrder($parser, $parser->list) || empty($statements->from))) {
-            throw new SQLParseException('SQL query isn\'t valid');
-        }
-        $db = $statements->from[0]->table;
-        $fields = array();
-        $orders = array();
+        if ($statements instanceof SelectStatement) {
 
-        $mongoWhere = !empty($statements->where) ? $this->parseWhereStatement($statements->where) : array();
-
-
-        if (sizeof($statements->expr) === 1 && $statements->expr[0]->expr === '*') {
+            if ($statements !== null && (!$statements->validateClauseOrder($parser, $parser->list) || empty($statements->from))) {
+                throw new SQLParseException('SQL query isn\'t valid');
+            }
+            $db = $statements->from[0]->table;
             $fields = array();
-        } else {
-            foreach ($statements->expr as $field) {
-                $fields[$field->expr] = 1;
-            }
-        }
-
-        if (empty($statements->order)) {
             $orders = array();
-        } else {
-            foreach ($statements->order as $order) {
-                $orders[$order->expr->column] = $order->type === 'ASC' ? 1 : -1;
+
+            $mongoWhere = !empty($statements->where) ? $this->parseWhereStatement($statements->where) : array();
+
+
+            if (sizeof($statements->expr) === 1 && $statements->expr[0]->expr === '*') {
+                $fields = array();
+            } else {
+                foreach ($statements->expr as $field) {
+                    $fields[$field->expr] = 1;
+                }
             }
+
+            if (empty($statements->order)) {
+                $orders = array();
+            } else {
+                foreach ($statements->order as $order) {
+                    $orders[$order->expr->column] = $order->type === 'ASC' ? 1 : -1;
+                }
+            }
+
+            $mongoQuery = array(
+                'db' => $db,
+                'filter' => $mongoWhere,
+                'options' => array(
+                    'projection' => $fields,
+                    'sort' => $orders,
+                ),
+            );
+
+            if (isset($statements->limit) && !empty($statements->limit)) {
+                if (!empty($statements->limit->rowCount) && is_int($statements->limit->rowCount)) {
+                    $mongoQuery['options']['limit'] = (int)$statements->limit->rowCount;
+                }
+                if (!empty($statements->limit->offset) && is_int($statements->limit->offset)) {
+                    $mongoQuery['options']['skip'] = (int)$statements->limit->offset;
+                }
+            }
+
+            //Remove empty elements
+            $mongoQuery['options'] = array_filter($mongoQuery['options']);
         }
-
-        $mongoQuery = array(
-            'db' => $db,
-            'filter' => $mongoWhere,
-            'options' => array(
-                'projection' => $fields,
-                'sort' => $orders,
-            ),
-        );
-
-        if (isset($statements->limit) && !empty($statements->limit)) {
-            if (!empty($statements->limit->rowCount) && is_int($statements->limit->rowCount)) {
-                $mongoQuery['options']['limit'] = (int)$statements->limit->rowCount;
-            }
-            if (!empty($statements->limit->offset) && is_int($statements->limit->offset)) {
-                $mongoQuery['options']['skip'] = (int)$statements->limit->offset;
-            }
-        }
-
-        //Remove empty elements
-        $mongoQuery['options'] = array_filter($mongoQuery['options']);
 
         return $mongoQuery;
     }
