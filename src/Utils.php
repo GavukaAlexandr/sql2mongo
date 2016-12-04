@@ -46,7 +46,7 @@ trait Utils
         return $data;
     }
 
-    public function printResult(CLImate $cli, $result)
+    public function printResultUsingTable(CLImate $cli, $result)
     {
         $data = $this->convertCursorToArray($result);
 
@@ -55,6 +55,16 @@ trait Utils
         } else {
             $cli->blue()->out('Search returned no results');
         }
+    }
 
+    public function printResultUsingJson(CLImate $cli, $result)
+    {
+        $data = json_encode(iterator_to_array($result));
+
+        if (!empty($data)) {
+            $cli->json($data);
+        } else {
+            $cli->blue()->out('Search returned no results');
+        }
     }
 }

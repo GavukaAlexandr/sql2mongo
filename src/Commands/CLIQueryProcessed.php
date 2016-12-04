@@ -42,23 +42,45 @@ class CLIQueryProcessed implements ConsoleCommand
      */
     public function handle($command)
     {
-        if ($command === 'help') {
-            $this->printListOfCommands();
-        } elseif ($command === 'SQL') {
-            $response = $this->enterQuery($this->cli);
-            $result = $this->executeSQLQuery($response);
-            if (!empty($result)) {
-                $this->printResult($this->cli, $result);
-            }
+        switch ($command) {
+            case 'help':
+                $this->printListOfCommands();
+                break;
+            case 'SQL':
+                $result = $this->processedSQLQuery();
+                $this->chooseMethodOfPrint($result);
+                break;
         }
+    }
+
+    /**
+     * Print list of available Commands
+     */
+    private function printListOfCommands()
+    {
+        $padding = $this->cli->padding(50)->char(' ');
+        $padding->label('    <bold><blue>SQL:</blue></bold>')->result('Enter SQL query');
+    }
+
+    /**
+     * Processed SQL query;
+     * @return array
+     */
+    private function processedSQLQuery()
+    {
+        $response = $this->enterQuery($this->cli);
+        $result = $this->executeSQLQuery($response);
+
+        return $result;
     }
 
     /**
      * Execute SQL query through MongoDBClient
      * @param $response
-     * @return mixed
+     * @return array
      */
-    private function executeSQLQuery($response) {
+    private function executeSQLQuery($response)
+    {
         $queryManager = new QueryManager($response);
         $mongoQuery = $queryManager->convertSQLToMongoQuery();
 
@@ -69,16 +91,32 @@ class CLIQueryProcessed implements ConsoleCommand
             return $result;
         }
 
-        return false;
+        return array();
     }
 
     /**
-     * Print list of available Commands
+     * Choose method of result print
+     * @param $result
      */
-    private function printListOfCommands()
+    private function chooseMethodOfPrint($result)
     {
-        $padding = $this->cli->padding(50)->char(' ');
-        $padding->label('    <bold><blue>SQL:</blue></bold>')->result('Enter SQL query');
+        if (!empty($result)) {
+            $options = ['Table', 'JSON'];
+            $this->cli->info('Table method does\'n support print sub arrays');
+            $input = $this->cli->radio('Please send me one of the following:', $options);
+            $method = $input->prompt();
+
+            switch ($method) {
+                case 'Table':
+                    $this->printResultUsingTable($this->cli, $result);
+                    break;
+                case 'JSON':
+                    $this->printResultUsingJson($this->cli, $result);
+                    break;
+            }
+        } else {
+            $this->cli->blue()->out('Search returned no results');
+        }
     }
 
 }
