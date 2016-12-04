@@ -11,7 +11,7 @@ before_script:
     - echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
     - composer self-update
     - composer install
-    - mongoimport --db test --collection restaurants --drop --file dump/dataset.json
+    - mongoimport --db tests --collection restaurants --drop --file dump/dataset.json
 
 script:
-  - phpunit --bootstrap vendor/autoload.php test
+  - phpunit --bootstrap vendor/autoload.php tests
