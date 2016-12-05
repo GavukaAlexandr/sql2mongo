@@ -36,12 +36,12 @@ You can run app by following steps:
 + Run php script **php src/sql2mongo.php**
 + Enter command **help**
 + You will see list of available commands
-![sql2mongo user interface](https://dl.dropboxusercontent.com/1/view/jw59ou94h2xufwe/Apps/Shutter/Selection_001.png)
+![sql2mongo user interface](http://dl1.joxi.net/drive/2016/12/05/0014/1773/980717/17/8a280949d9.png)
 + How you can use these commands you can see on the screenshots
-![sql2mongo executing commands](https://dl.dropboxusercontent.com/1/view/skj8gpilr8y1ohw/Apps/Shutter/Selection_002.png)
+![sql2mongo executing commands](http://dl1.joxi.net/drive/2016/12/05/0014/1773/980717/17/83f687ce9c.png)
 + How execute SQL query  you can see on the screenshots
-![sql2mongo executing SQL query](https://dl.dropboxusercontent.com/1/view/uurglg2hrjdld9g/Apps/Shutter/Selection_003.png)
-![sql2mongo executing SQL query](https://dl.dropboxusercontent.com/1/view/d3cxpeewquzqpvj/Apps/Shutter/Selection_004.png)
+![sql2mongo executing SQL query](http://dl2.joxi.net/drive/2016/12/05/0014/1773/980717/17/c2129133e7.png)
+![sql2mongo executing SQL query](http://dl2.joxi.net/drive/2016/12/05/0014/1773/980717/17/f2efc66dea.png)
 
 
 ## Dependencies
